@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "serverless-python-template"
+version = "0.1.0"
+description = ""
+authors = ["elmiringos"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic = "^2.11.1"
+boto3 = "^1.37.26"
+pymysql = "^1.1.1"
+sqlalchemy = "^2.0.40"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.11.2"
+
+[tool.black]
+line-length = 100
+target-version = ['py38']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+skip_gitignore = true
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint.per-file-ignores]
+"config*.py" = ["E501"]
+
+[tool.ruff.lint]
+extend-select = ["E501"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

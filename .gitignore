@@ -103,8 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-**/setting*py
-setting*py
 .serverless
 .serverless/**
 
@@ -123,3 +121,6 @@ utility/package-lock.json
 
 # asdf
 **/.tool-versions
+
+# configs
+**/config.py

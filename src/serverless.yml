@@ -1,0 +1,42 @@
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
+
+service: contract-api
+provider:
+  name: aws
+  runtime: python3.12
+  memorySize: 512
+  timeout: 30
+  region: ${file(./config.${self:provider.stage}.json):REGION}
+  stage: ${opt:stage,'dev'}
+  deploymentPrefix: serverless
+
+custom:
+  pythonRequirements:
+    fileName: poetry.lock
+    requirePoetryLockFile: false
+
+functions:
+
+  get-organization:
+    handler: src/application/handler/ogranization_handler.get_organization
+    role: ${file(./config.${self:provider.stage}.json):ROLE}
+    vpc: ${self:custom.defaultVPC}
+    events:
+      - http:
+          authorizer: ${file(./config.${self:provider.stage}.json):AuthorizerARN}
+          method: GET
+          path: ${self:custom.baseVersion}/organization/{organization_id}
+          cors: ${self:custom.defaultCORS}
+
+  create-organization:
+      handler: src/application/handler/ogranization_handler.create_organization
+      role: ${file(./config.${self:provider.stage}.json):ROLE}
+      vpc: ${self:custom.defaultVPC}
+      events:
+        - http:
+            authorizer: ${file(./config.${self:provider.stage}.json):AuthorizerARN}
+            method: POST
+            path: ${self:custom.baseVersion}/organization/{organization_id}
+            cors: ${self:custom.defaultCORS}

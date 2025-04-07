@@ -13,15 +13,12 @@ class OrganizationRepository(BaseRepository):
     def insert_organization(self, organization_entity: OrganizationEntity) -> uuid.UUID:
         """Inserts a new organization and returns its UUID."""
         organization_uuid = uuid.uuid4()
-        
-        query = (
-            insert(Organization)
-            .values(
-                id=organization_uuid,
-                name=organization_entity.name,
-                email=organization_entity.email,
-                description=organization_entity.description,
-            )
+
+        query = insert(Organization).values(
+            id=organization_uuid,
+            name=organization_entity.name,
+            email=organization_entity.email,
+            description=organization_entity.description,
         )
 
         self.session.execute(query)
@@ -66,10 +63,7 @@ class OrganizationRepository(BaseRepository):
         if not update_values:
             raise ValueError("At least one field (name, email, or description) must be provided")
 
-        query = (
-            update(Organization)
-            .where(Organization.id == organization_id)
-        )
+        query = update(Organization).where(Organization.id == organization_id)
 
         self.session.execute(query).scalar_one()
         self.session.commit()

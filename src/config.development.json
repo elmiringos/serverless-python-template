@@ -1,0 +1,19 @@
+{
+  "REGION": "us-east-1",
+  "ROLE": "",
+  "SG1": "",
+  "SG2": "",
+  "VPC1": "",
+  "VPC2": "",
+  "ORIGIN": "*",
+  "OWNER": "",
+  "TEAM": "",
+  "BASE_LAYER": "",
+  "COGNITO_USER_POOL_ARN": "",
+  "COGNITO_USER_POOL_NAME": "",
+  "ADDITIONAL_LAYER1": "",
+  "SEGMENT1": "",
+  "SEGMENT2": "",
+  "SEGMENT3": "",
+  "AuthorizerARN": ""
+}

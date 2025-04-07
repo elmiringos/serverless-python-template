@@ -12,25 +12,26 @@ class OrganizationRepository(BaseRepository):
     @BaseRepository.write_ops
     def insert_organization(self, organization_entity: OrganizationEntity) -> uuid.UUID:
         """Inserts a new organization and returns its UUID."""
+        organization_uuid = uuid.uuid4()
+        
         query = (
             insert(Organization)
             .values(
-                id=uuid.uuid4(),
+                id=organization_uuid,
                 name=organization_entity.name,
                 email=organization_entity.email,
                 description=organization_entity.description,
             )
-            .returning(Organization.id)
         )
 
-        result = self.session.execute(query)
-        new_org_id = result.scalar_one()
+        self.session.execute(query)
         self.session.commit()
-        return uuid.UUID(new_org_id)
+
+        return organization_uuid
 
     def get_organization(self, organization_id: uuid.UUID) -> OrganizationEntity | None:
         """Fetches an organization by ID and maps it to OrganizationEntity."""
-        query = select(Organization).where(Organization.id == organization_id)
+        query = select(Organization).where(Organization.id == str(organization_id))
         result = self.session.execute(query)
         db_organization = result.scalar_one_or_none()
 
@@ -68,19 +69,16 @@ class OrganizationRepository(BaseRepository):
         query = (
             update(Organization)
             .where(Organization.id == organization_id)
-            .values(**update_values)
-            .returning(Organization)
         )
 
-        result = self.session.execute(query).scalar_one()
+        self.session.execute(query).scalar_one()
         self.session.commit()
 
-        return OrganizationEntity(
-            id=uuid.UUID(result.id),
-            name=result.name,
-            email=result.email,
-            description=result.description,
-        )
+        updated_organization = self.get_organization(organization_id)
+        if updated_organization is None:
+            raise ValueError(f"Organization with ID {organization_id} not found after update")
+
+        return updated_organization
 
     @BaseRepository.write_ops
     def delete_organization(self, organization_id: uuid.UUID):

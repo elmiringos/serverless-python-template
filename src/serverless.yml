@@ -2,25 +2,45 @@ plugins:
   - serverless-offline
   - serverless-python-requirements
 
-service: contract-api
+service: template-service
 provider:
   name: aws
   runtime: python3.12
   memorySize: 512
   timeout: 30
   region: ${file(./config.${self:provider.stage}.json):REGION}
-  stage: ${opt:stage,'dev'}
+  stage: ${opt:stage,'development'}
   deploymentPrefix: serverless
 
 custom:
   pythonRequirements:
     fileName: poetry.lock
     requirePoetryLockFile: false
+  baseVersion: v1
+  defaultVPC:
+    securityGroupIds:
+      - ${file(./config.${self:provider.stage}.json):SG1}
+      - ${file(./config.${self:provider.stage}.json):SG2}
+    subnetIds:
+      - ${file(./config.${self:provider.stage}.json):VPC1}
+      - ${file(./config.${self:provider.stage}.json):VPC2}
+  defaultCORS:
+    origin: ${file(./config.${self:provider.stage}.json):ORIGIN}
+    allowCredentials: true
+    headers:
+      - Content-Type
+      - X-Amz-Date
+      - Authorization
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+      - x-requested-with
+      - x-refresh-token
 
 functions:
 
   get-organization:
-    handler: src/application/handler/ogranization_handler.get_organization
+    handler: application/handler/organization_handler.get_organization
     role: ${file(./config.${self:provider.stage}.json):ROLE}
     vpc: ${self:custom.defaultVPC}
     events:
@@ -31,12 +51,12 @@ functions:
           cors: ${self:custom.defaultCORS}
 
   create-organization:
-      handler: src/application/handler/ogranization_handler.create_organization
+      handler: application/handler/organization_handler.create_organization
       role: ${file(./config.${self:provider.stage}.json):ROLE}
       vpc: ${self:custom.defaultVPC}
       events:
         - http:
             authorizer: ${file(./config.${self:provider.stage}.json):AuthorizerARN}
             method: POST
-            path: ${self:custom.baseVersion}/organization/{organization_id}
+            path: ${self:custom.baseVersion}/organization
             cors: ${self:custom.defaultCORS}

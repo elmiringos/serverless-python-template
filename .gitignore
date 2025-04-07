@@ -124,3 +124,6 @@ utility/package-lock.json
 
 # configs
 **/config.py
+
+# node_modules
+node_modules/

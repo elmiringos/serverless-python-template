@@ -23,7 +23,7 @@ exception_handler_default_args = {
 
 
 @exception_handler(**exception_handler_default_args)
-def get_organinization(event, context):
+def get_organization(event, context):
     """
     Handler function to get organization details.
     """

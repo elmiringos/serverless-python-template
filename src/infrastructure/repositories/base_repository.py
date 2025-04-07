@@ -1,6 +1,6 @@
 from functools import wraps
 
-from config import DB_CONFIG
+from src.config import DB_CONFIG
 from common.logger import get_logger
 
 from sqlalchemy import create_engine

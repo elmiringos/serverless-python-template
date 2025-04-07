@@ -10,7 +10,7 @@ from common.exception_handler import exception_handler
 from common.exceptions import BadRequestException, EXCEPTIONS_IGNORING_ALERT, NotFoundException
 from common.logger import get_logger
 from common.utils import generate_lambda_response, format_response
-from config import ALERTS_PROCESSOR
+from src.config import ALERTS_PROCESSOR
 
 from pydantic import ValidationError
 
@@ -37,6 +37,7 @@ def get_organization(event, context):
         raise NotFoundException("No record found")
 
     response = format_response(ResponseStatus.SUCCESS, result.model_dump())
+
     return generate_lambda_response(HTTPStatus.OK, response, cors_enabled=True)
 
 
@@ -52,4 +53,5 @@ def create_organization(event, context):
 
     result = OrganizationService().create_organization(request)
     response = format_response(ResponseStatus.SUCCESS, result)
+
     return generate_lambda_response(HTTPStatus.CREATED, response, cors_enabled=True)

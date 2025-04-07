@@ -4,15 +4,19 @@ import uuid
 from common.constants import ResponseStatus
 
 
-def format_response(status, response: dict):
+def format_response(status, response: dict | None = None):
     if status == ResponseStatus.SUCCESS:
         return {"status": status, "data": response}
     elif status == ResponseStatus.FAILED:
-        error_data = {
-            "code": response.get("code", 0000),
-            "message": response.get("message", "Unexpected error"),
-            "details": response.get("details", {}),
-        }
+        error_data = (
+            {
+                "code": response.get("code", 0000),
+                "message": response.get("message", "Unexpected error"),
+                "details": response.get("details", {}),
+            }
+            if response
+            else None
+        )
         return {"status": status, "error": error_data}
     else:
         return {}

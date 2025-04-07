@@ -1,8 +1,7 @@
-import config
-
 from pydantic import Field, BaseModel
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from src import config
 from common.alerts import (
     AlertsProcessor,
     MattermostProcessor,
@@ -45,9 +44,7 @@ class Settings(BaseSettings):
     alerts_processor: AlertsProcessorConfig = Field(default_factory=AlertsProcessorConfig)
     aws_s3: S3Config = Field(default_factory=S3Config)
 
-    class Config:
-        env_file = ".env"
-        env_nested_delimiter = "__"
+    model_config = SettingsConfigDict(env_file=".env", env_nested_delimiter="__")
 
 
 settings = Settings()

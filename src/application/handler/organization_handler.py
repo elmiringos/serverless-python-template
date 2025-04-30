@@ -1,10 +1,12 @@
 from http import HTTPStatus
 
+from src.application.schemas.common import PayloadValidationError
 from src.application.schemas.organization import (
     GetOrganizationRequest,
     CreateOrganizationRequest,
 )
 from src.application.service.organization_service import OrganizationService
+from src.infrastructure.di_container import container
 from common.constants import ResponseStatus
 from common.exception_handler import exception_handler
 from common.exceptions import BadRequestException, EXCEPTIONS_IGNORING_ALERT, NotFoundException
@@ -24,15 +26,12 @@ exception_handler_default_args = {
 
 @exception_handler(**exception_handler_default_args)
 def get_organization(event, context):
-    """
-    Handler function to get organization details.
-    """
     try:
         request = GetOrganizationRequest.validate_event(event)
     except ValidationError as e:
         raise BadRequestException(str(e))
 
-    result = OrganizationService().get_organization(request)
+    result = container.resolve(OrganizationService).get_organization(request)
     if result is None:
         raise NotFoundException("No record found")
 
@@ -43,15 +42,12 @@ def get_organization(event, context):
 
 @exception_handler(**exception_handler_default_args)
 def create_organization(event, context):
-    """
-    Handler function to create a new organization.
-    """
     try:
         request = CreateOrganizationRequest.validate_event(event)
-    except ValidationError as e:
+    except PayloadValidationError as e:
         raise BadRequestException(str(e))
 
-    result = OrganizationService().create_organization(request)
+    result = container.resolve(OrganizationService).create_organization(request)
     response = format_response(ResponseStatus.SUCCESS, result)
 
     return generate_lambda_response(HTTPStatus.CREATED, response, cors_enabled=True)

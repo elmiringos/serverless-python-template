@@ -2,7 +2,7 @@ import json
 import uuid
 from src.application.schemas.common import PayloadValidationError
 from src.domain.organization import OrganizationEntity
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ValidationError
 
 
 class CreateOrganizationRequest(BaseModel):
@@ -16,7 +16,7 @@ class CreateOrganizationRequest(BaseModel):
             assert event.get("body") is not None, "Invalid event body"
             body = json.loads(event["body"])
             return cls.model_validate(body)
-        except (AssertionError, json.JSONDecodeError):
+        except (AssertionError, json.JSONDecodeError, ValidationError):
             raise PayloadValidationError()
 
     def map_to_entity(self) -> OrganizationEntity:

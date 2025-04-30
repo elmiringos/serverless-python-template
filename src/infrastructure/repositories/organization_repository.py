@@ -1,14 +1,14 @@
 import uuid
 from sqlalchemy import delete, insert, select, update
 from src.infrastructure.repositories.base_repository import BaseRepository
-from src.domain.organization import OrganizationEntity
+from src.domain.organization import OrganizationEntity, OrganizationRepositoryAdapter
 from src.infrastructure.models import Organization
 from common.logger import get_logger
 
 logger = get_logger(__name__)
 
 
-class OrganizationRepository(BaseRepository):
+class OrganizationRepository(BaseRepository, OrganizationRepositoryAdapter):
     @BaseRepository.write_ops
     def insert_organization(self, organization_entity: OrganizationEntity) -> uuid.UUID:
         """Inserts a new organization and returns its UUID."""

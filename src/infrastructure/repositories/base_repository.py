@@ -1,24 +1,22 @@
 from functools import wraps
 
-from src.config import DB_CONFIG
+from src.settings import settings
 from common.logger import get_logger
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 
-DB_URL = (
-    f"{DB_CONFIG['DRIVER']}://{DB_CONFIG['USER']}:{DB_CONFIG['PASSWORD']}"
-    f"@{DB_CONFIG['HOST']}:{DB_CONFIG['PORT']}/{DB_CONFIG['NAME']}"
-)
-engine = create_engine(DB_URL, echo=False)
 logger = get_logger(__name__)
-Session = sessionmaker(bind=engine)
 
 
 class BaseRepository:
     def __init__(self):
-        self.session = Session()
+        db = settings.db
+        db_url = f"mysql+pymysql://{db.USER}:{db.PASSWORD}@{db.HOST}:{db.PORT}/{db.NAME}"
+        engine = create_engine(db_url, echo=True)
+        SessionLocal = sessionmaker(bind=engine)
+        self.session = SessionLocal()
 
     def __del__(self):
         self.session.close()
